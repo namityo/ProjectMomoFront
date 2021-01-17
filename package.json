@@ -1,0 +1,23 @@
+{
+  "name": "projectmomofront",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/namityo/ProjectMomoFront.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/namityo/ProjectMomoFront/issues"
+  },
+  "homepage": "https://github.com/namityo/ProjectMomoFront#readme",
+  "dependencies": {
+    "amazon-cognito-identity-js": "^4.5.7",
+    "http-server": "^0.12.3"
+  }
+}
