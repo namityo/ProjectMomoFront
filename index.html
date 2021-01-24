@@ -104,16 +104,25 @@
 
         function callapi()
         {
-            $.ajax({
-                type: "POST",
-                url: "https://pna5neos74.execute-api.ap-northeast-1.amazonaws.com/dev/invoice",
-                data: {},
-                success: function(data, dataType) {
-                    alert(data);
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    console.log(textStatus);
-                },
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool({UserPoolId:'ap-northeast-1_CsnTBHiiR', ClientId:'12g59sh129i3448cqfhsnv70g2',});
+
+            userPool.getCurrentUser().getSession(function(e, session){
+                $.ajax({
+                    type: 'POST',
+                    url: "https://pna5neos74.execute-api.ap-northeast-1.amazonaws.com/dev/invoice/",
+                    headers: {
+                        Authorization: session.getIdToken().jwtToken,
+                    },
+                    dataType: 'json',
+                    data: {},
+                    contentType: 'application/json',
+                    success: function(data, dataType) {
+                        alert(data);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                });
             });
         }
 
