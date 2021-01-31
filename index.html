@@ -10,9 +10,14 @@
     <input type="button" onClick="login()" value="Login" />
     <input type="button" id="btn_logout" onClick="logout()" value="Logout" disabled="true" />
     <input type="button" onClick="callapi()" value="CallApi" />
+    <input type="button" onClick="GetList()" value="GetList" />
+
+    <div id="item-list">
+    </div>
 
     <script src="js/amazon-cognito-identity.min.js"></script>
     <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/download.js"></script>
     <script type="text/javascript">
         $(function(){
             var userPool = new AmazonCognitoIdentity.CognitoUserPool({UserPoolId:'ap-northeast-1_CsnTBHiiR', ClientId:'12g59sh129i3448cqfhsnv70g2',});
@@ -118,6 +123,64 @@
                     contentType: 'application/json',
                     success: function(data, dataType) {
                         alert(data);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                });
+            });
+        }
+
+        function GetList()
+        {
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool({UserPoolId:'ap-northeast-1_CsnTBHiiR', ClientId:'12g59sh129i3448cqfhsnv70g2',});
+
+            userPool.getCurrentUser().getSession(function(e, session){
+                $.ajax({
+                    type: 'GET',
+                    url: "https://pna5neos74.execute-api.ap-northeast-1.amazonaws.com/dev/invoice/",
+                    headers: {
+                        Authorization: session.getIdToken().jwtToken,
+                    },
+                    dataType: 'json',
+                    data: {},
+                    contentType: 'application/json',
+                    success: function(data, dataType) {
+                        data.objects.forEach(obj => {
+                            var element = $("<div>").appendTo("#item-list");
+                            var item = $("<span>").addClass("key").text(obj.key);
+                            //$("<a>", {href:"https://pna5neos74.execute-api.ap-northeast-1.amazonaws.com/dev/invoice/" + obj.key}).text(obj.key).appendTo(item);
+                            item.appendTo(element);
+                            $("<span>").text(obj.size).appendTo(element);
+                        });
+
+                        // イベントを登録
+                        $("span.key").on("click", function(element)
+                        {
+                            var key = $(this).text();
+                            GetObject(key);
+                        });
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(textStatus);
+                    },
+                });
+            });
+        }
+
+        function GetObject(key)
+        {
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool({UserPoolId:'ap-northeast-1_CsnTBHiiR', ClientId:'12g59sh129i3448cqfhsnv70g2',});
+
+            userPool.getCurrentUser().getSession(function(e, session){
+                $.ajax({
+                    type: 'GET',
+                    url: "https://pna5neos74.execute-api.ap-northeast-1.amazonaws.com/dev/invoice/" + key,
+                    headers: {
+                        Authorization: session.getIdToken().jwtToken,
+                    },
+                    success: function(data, dataType) {
+                        download("data:application/octet-stream;base64,"+data,key,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                         console.log(textStatus);
